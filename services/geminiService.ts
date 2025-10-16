@@ -4,12 +4,8 @@ import type { RecipeOutput, ImageFile } from '../types';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-if (!API_KEY) {
-  throw new Error("VITE_API_KEY environment variable is not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
-const model = ai.models;
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
+const model = ai?.models || null;
 
 const mainPrompt = `
 # РОЛЬ И ЗАДАЧА
@@ -63,6 +59,10 @@ const mainPrompt = `
 type Part = { text: string } | { inlineData: { mimeType: string; data: string } };
 
 export const generateInstagramPost = async (text: string, images: ImageFile[]): Promise<RecipeOutput> => {
+  if (!API_KEY || !model) {
+    throw new Error("API ключ Gemini не настроен. Пожалуйста, добавьте VITE_API_KEY в файл .env");
+  }
+
   const parts: Part[] = [{ text: mainPrompt }];
 
   if (text) {
