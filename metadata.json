@@ -1,0 +1,5 @@
+{
+  "name": "Insta-Recipe Post Generator",
+  "description": "An application that transforms dietetic recipes from text or images into beautifully formatted Instagram posts using AI, including KBJU calculations, hashtags, and a visual prompt.",
+  "requestFramePermissions": []
+}
