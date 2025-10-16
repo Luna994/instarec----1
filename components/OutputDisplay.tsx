@@ -7,7 +7,7 @@ interface OutputDisplayProps {
   output: RecipeOutput;
 }
 
-const OutputSection: React.FC<{ title: string; content: string; pre?: boolean }> = ({ title, content, pre = false }) => {
+const OutputSection = ({ title, content, pre = false }: { title: string; content: string; pre?: boolean }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -43,7 +43,7 @@ const OutputSection: React.FC<{ title: string; content: string; pre?: boolean }>
 };
 
 
-export const OutputDisplay: React.FC<OutputDisplayProps> = ({ output }) => {
+export const OutputDisplay = ({ output }: OutputDisplayProps) => {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 animate-fade-in">
         <h2 className="text-xl font-bold mb-4 text-slate-800">Ваш пост готов! ✨</h2>

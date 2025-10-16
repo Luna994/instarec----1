@@ -2,14 +2,13 @@
 import { GoogleGenAI } from "@google/genai";
 import type { RecipeOutput, ImageFile } from '../types';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 if (!API_KEY) {
-  throw new Error("API_KEY environment variable is not set");
+  throw new Error("VITE_API_KEY environment variable is not set");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
-
 const model = ai.models;
 
 const mainPrompt = `
@@ -61,39 +60,41 @@ const mainPrompt = `
 `;
 
 
+type Part = { text: string } | { inlineData: { mimeType: string; data: string } };
+
 export const generateInstagramPost = async (text: string, images: ImageFile[]): Promise<RecipeOutput> => {
-  // FIX: The Gemini API expects an array of `Part` objects. Raw strings are not
-  // valid parts. Text content must be wrapped in an object like `{ text: "..." }`.
-  const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [];
+  const parts: Part[] = [{ text: mainPrompt }];
 
   if (text) {
-    parts.push({ text: mainPrompt });
-    parts.push({ text: text });
-  } else {
-    parts.push({ text: mainPrompt });
+    parts.push({ text });
   }
 
-  images.forEach(image => {
-    parts.push({
+  if (images.length > 0) {
+    parts.push(...images.map(image => ({
       inlineData: {
         mimeType: image.type,
         data: image.base64,
       }
-    });
-  });
+    })));
+  }
 
-  const response = await model.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: { parts: parts },
-  });
-
-  const responseText = response.text.trim();
-  
   try {
-    const jsonResponse = JSON.parse(responseText);
+    const response = await model.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: { parts },
+    });
+
+    const responseText = response.text.trim();
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
+    }
+
+    const jsonResponse = JSON.parse(jsonMatch[0]);
     return jsonResponse as RecipeOutput;
   } catch (error) {
-    console.error("Failed to parse Gemini response as JSON:", responseText);
-    throw new Error("AI response was not valid JSON. Check the console for the raw response.");
+    console.error("Failed to generate post:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to generate Instagram post");
   }
 };
