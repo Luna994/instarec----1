@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { InputArea } from './components/InputArea';
 import { OutputDisplay } from './components/OutputDisplay';
@@ -7,12 +7,12 @@ import { Loader } from './components/Loader';
 import { generateInstagramPost } from './services/geminiService';
 import type { RecipeOutput, ImageFile } from './types';
 
-const App = () => {
+const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<RecipeOutput | null>(null);
 
-  const handleGenerate = useCallback(async (text: string, images: ImageFile[]) => {
+  const handleGenerate = async (text: string, images: ImageFile[]) => {
     setIsLoading(true);
     setError(null);
     setOutput(null);
@@ -32,7 +32,7 @@ const App = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">

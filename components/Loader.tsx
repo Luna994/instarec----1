@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export const Loader = () => {
+export const Loader: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-sm border border-slate-200 h-full">
       <svg className="animate-spin -ml-1 mr-3 h-10 w-10 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

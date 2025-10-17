@@ -19,7 +19,7 @@ const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-export const InputArea = ({ onGenerate, isLoading }: InputAreaProps) => {
+export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) => {
   const [inputType, setInputType] = useState<InputType>('text');
   const [text, setText] = useState<string>('');
   const [images, setImages] = useState<ImageFile[]>([]);
@@ -31,7 +31,7 @@ export const InputArea = ({ onGenerate, isLoading }: InputAreaProps) => {
     }
   };
 
-  const processFiles = useCallback(async (files: FileList) => {
+  const processFiles = async (files: FileList) => {
     const imageFiles: ImageFile[] = [];
     for (const file of Array.from(files)) {
       if (file.type.startsWith('image/')) {
@@ -40,7 +40,7 @@ export const InputArea = ({ onGenerate, isLoading }: InputAreaProps) => {
       }
     }
     setImages(prev => [...prev, ...imageFiles]);
-  }, []);
+  }
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -58,15 +58,15 @@ export const InputArea = ({ onGenerate, isLoading }: InputAreaProps) => {
     if(event.dataTransfer.files) {
         await processFiles(event.dataTransfer.files);
     }
-  }, [processFiles]);
-
-  const handleSubmit = useCallback(() => {
-    onGenerate(text, images);
-  }, [text, images, onGenerate]);
-
-  const removeImage = useCallback((index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
   }, []);
+
+  const handleSubmit = () => {
+    onGenerate(text, images);
+  };
+
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  }
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">

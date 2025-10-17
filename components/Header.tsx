@@ -2,7 +2,7 @@
 import React from 'react';
 import { RecipeIcon } from './icons/RecipeIcon';
 
-export const Header = () => {
+export const Header: React.FC = () => {
   return (
     <header className="bg-white border-b border-slate-200">
       <div className="container mx-auto px-4 md:px-8 py-4 flex items-center gap-4">

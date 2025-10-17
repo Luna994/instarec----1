@@ -1,10 +1,12 @@
-
 export interface RecipeOutput {
-  recipe: string;
-  kbju: string;
-  diets: string;
-  hashtags: string;
-  prompt: string;
+  "Номер": string;
+  "Заголовок": string;
+  "Рецепт": string;
+  "Совет": string;
+  "ДопИнфа": string;
+  "Диеты": string;
+  "Хэштеги": string;
+  "Промпт": string;
 }
 
 export interface ImageFile {
