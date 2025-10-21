@@ -49,7 +49,11 @@ const App: React.FC = () => {
 
     } catch (e) {
       console.error(e);
-      setError('Не удалось сгенерировать пост. Пожалуйста, проверьте консоль для получения подробной информации об ошибке и попробуйте снова.');
+      let errorMessage = 'Не удалось сгенерировать пост. Пожалуйста, проверьте консоль для получения подробной информации об ошибке и попробуйте снова.';
+      if (e instanceof Error && (e.message.includes('API_KEY_INVALID') || e.message.includes('API key not valid'))) {
+        errorMessage = 'Ключ API недействителен. Пожалуйста, проверьте, что вы правильно настроили секрет API_KEY в переменных окружения вашего проекта. Убедитесь, что ключ скопирован верно и имеет доступ к Gemini API.';
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
