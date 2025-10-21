@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { RecipeOutput } from '../types';
 import { CopyIcon } from './icons/CopyIcon';
@@ -63,7 +64,7 @@ export const OutputDisplay: React.FC<OutputDisplayProps> = ({ output }) => {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 animate-fade-in">
         <h2 className="text-xl font-bold mb-4 text-slate-800">Ваш пост готов! ✨</h2>

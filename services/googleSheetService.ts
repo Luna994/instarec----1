@@ -1,3 +1,4 @@
+
 import type { RecipeOutput } from '../types';
 
 // URL вебхука для Make.com, который интегрируется с Google Таблицей.

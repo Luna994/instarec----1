@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import type { RecipeOutput, ImageFile } from '../types';
 
@@ -78,8 +79,6 @@ const mainPrompt = `
 
 
 export const generateInstagramPost = async (text: string, images: ImageFile[]): Promise<RecipeOutput> => {
-  // FIX: The Gemini API expects an array of `Part` objects. Raw strings are not
-  // valid parts. Text content must be wrapped in an object like `{ text: "..." }`.
   const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [];
 
   if (text) {

@@ -1,10 +1,13 @@
-
 import React, { useState, useCallback } from 'react';
 import type { ImageFile } from '../types';
 import { UploadIcon } from './icons/UploadIcon';
 
 interface InputAreaProps {
-  onGenerate: (text: string, images: ImageFile[]) => void;
+  text: string;
+  onTextChange: (text: string) => void;
+  images: ImageFile[];
+  onImagesChange: (images: ImageFile[]) => void;
+  onGenerate: () => void;
   isLoading: boolean;
 }
 
@@ -19,10 +22,15 @@ const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) => {
+export const InputArea: React.FC<InputAreaProps> = ({ 
+  text, 
+  onTextChange, 
+  images, 
+  onImagesChange, 
+  onGenerate, 
+  isLoading 
+}) => {
   const [inputType, setInputType] = useState<InputType>('text');
-  const [text, setText] = useState<string>('');
-  const [images, setImages] = useState<ImageFile[]>([]);
   const [dragOver, setDragOver] = useState(false);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +47,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
         imageFiles.push({ name: file.name, base64, type: file.type });
       }
     }
-    setImages(prev => [...prev, ...imageFiles]);
+    onImagesChange([...images, ...imageFiles]);
   }
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
@@ -58,14 +66,10 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     if(event.dataTransfer.files) {
         await processFiles(event.dataTransfer.files);
     }
-  }, []);
-
-  const handleSubmit = () => {
-    onGenerate(text, images);
-  };
+  }, [images, onImagesChange]);
 
   const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
+    onImagesChange(images.filter((_, i) => i !== index));
   }
 
   return (
@@ -96,9 +100,9 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
       {inputType === 'text' && (
         <textarea
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => onTextChange(e.target.value)}
           placeholder="Вставьте сюда текст рецепта из книги..."
-          className="w-full h-64 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow resize-y"
+          className="w-full h-64 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-shadow resize-y bg-slate-50"
           disabled={isLoading}
         />
       )}
@@ -108,7 +112,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragOver ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300'}`}>
+          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragOver ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300 bg-slate-50'}`}>
           <UploadIcon className="mx-auto h-12 w-12 text-slate-400" />
           <p className="mt-2 text-sm text-slate-600">
             Перетащите файлы сюда или{' '}
@@ -136,7 +140,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
       )}
 
       <button
-        onClick={handleSubmit}
+        onClick={onGenerate}
         disabled={isLoading || (text.trim() === '' && images.length === 0)}
         className="mt-6 w-full bg-emerald-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
       >
