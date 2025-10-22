@@ -2,10 +2,6 @@
 import { GoogleGenAI } from "@google/genai";
 import type { RecipeOutput, ImageFile } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-const model = ai.models;
-
 const mainPrompt = `
 # РОЛЬ И ЗАДАЧА
 Ты — копирайтер и иллюстратор проекта «Вкусно. Просто. Полезно.». Твоя задача — переработать рецепт диетического питания из предоставленного текста и/или изображений в готовый пост для Instagram.
@@ -73,6 +69,8 @@ const mainPrompt = `
 
 
 export const generateInstagramPost = async (text: string, images: ImageFile[]): Promise<RecipeOutput> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
   const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [];
 
   if (text) {
