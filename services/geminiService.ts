@@ -69,8 +69,9 @@ const mainPrompt = `
 
 
 export const generateInstagramPost = async (text: string, images: ImageFile[]): Promise<RecipeOutput> => {
-  // Инициализируем клиент с пустым объектом, так как платформа автоматически предоставляет ключ API.
-  const ai = new GoogleGenAI({});
+  // SDK требует явной передачи ключа API при работе в браузере.
+  // Платформа предоставляет ключ через process.env.API_KEY.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [
     { text: mainPrompt }
