@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { InputArea } from './components/InputArea';
@@ -16,7 +17,6 @@ const App: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [inputText, setInputText] = useState<string>('');
   const [inputImages, setInputImages] = useState<ImageFile[]>([]);
-
 
   useEffect(() => {
     setHistory(historyService.getHistory());
@@ -50,8 +50,10 @@ const App: React.FC = () => {
     } catch (e) {
       console.error(e);
       let errorMessage = 'Не удалось сгенерировать пост. Пожалуйста, проверьте консоль для получения подробной информации об ошибке и попробуйте снова.';
-      if (e instanceof Error && (e.message.includes('API_KEY_INVALID') || e.message.includes('API key not valid'))) {
-        errorMessage = 'Ключ API недействителен. Пожалуйста, проверьте, что вы правильно настроили секрет API_KEY в переменных окружения вашего проекта. Убедитесь, что ключ скопирован верно и имеет доступ к Gemini API.';
+      if (e instanceof Error) {
+        if (e.message.includes('API_KEY_INVALID') || e.message.includes('API key not valid')) {
+          errorMessage = 'Ключ API недействителен. Пожалуйста, убедитесь, что ключ предоставлен средой выполнения правильно.';
+        }
       }
       setError(errorMessage);
     } finally {
@@ -79,41 +81,43 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <Header />
       <main className="container mx-auto p-4 md:p-8 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-9 gap-8 items-start">
-          <div className="lg:col-span-4">
-            <InputArea 
-              text={inputText}
-              onTextChange={setInputText}
-              images={inputImages}
-              onImagesChange={setInputImages}
-              onGenerate={handleGenerate} 
-              isLoading={isLoading} 
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-9 gap-8 items-start">
+            <div className="lg:col-span-4">
+              <InputArea 
+                text={inputText}
+                onTextChange={setInputText}
+                images={inputImages}
+                onImagesChange={setInputImages}
+                onGenerate={handleGenerate} 
+                isLoading={isLoading} 
+              />
+            </div>
+            <div className="lg:col-span-5">
+              {isLoading && <Loader />}
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                  <strong className="font-bold">Ошибка: </strong>
+                  <span className="block sm:inline">{error}</span>
+                </div>
+              )}
+              {output && !isLoading && <OutputDisplay output={output} />}
+              {!output && !isLoading && !error && (
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center text-slate-500 h-full flex flex-col justify-center">
+                      <p className="text-lg">Здесь появится ваш готовый пост для Instagram.</p>
+                      <p className="mt-2 text-sm">Просто введите или загрузите рецепт и нажмите "Сгенерировать".</p>
+                  </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <HistoryAccordion 
+              history={history}
+              onLoadItem={handleLoadFromHistory}
+              onClearHistory={handleClearHistory}
             />
           </div>
-          <div className="lg:col-span-5">
-            {isLoading && <Loader />}
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                <strong className="font-bold">Ошибка: </strong>
-                <span className="block sm:inline">{error}</span>
-              </div>
-            )}
-            {output && !isLoading && <OutputDisplay output={output} />}
-            {!output && !isLoading && !error && (
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center text-slate-500 h-full flex flex-col justify-center">
-                    <p className="text-lg">Здесь появится ваш готовый пост для Instagram.</p>
-                    <p className="mt-2 text-sm">Просто введите или загрузите рецепт и нажмите "Сгенерировать".</p>
-                </div>
-            )}
-          </div>
-        </div>
-        <div>
-          <HistoryAccordion 
-            history={history}
-            onLoadItem={handleLoadFromHistory}
-            onClearHistory={handleClearHistory}
-          />
-        </div>
+        </>
       </main>
       <footer className="text-center p-4 text-slate-400 text-xs">
         <p>Создано с ❤️ для проекта «Вкусно. Просто. Полезно.»</p>

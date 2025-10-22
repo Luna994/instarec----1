@@ -69,15 +69,15 @@ const mainPrompt = `
 
 
 export const generateInstagramPost = async (text: string, images: ImageFile[]): Promise<RecipeOutput> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Инициализируем клиент с пустым объектом, так как платформа автоматически предоставляет ключ API.
+  const ai = new GoogleGenAI({});
   
-  const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [];
+  const parts: ({ text: string } | { inlineData: { mimeType: string; data: string } })[] = [
+    { text: mainPrompt }
+  ];
 
   if (text) {
-    parts.push({ text: mainPrompt });
     parts.push({ text: text });
-  } else {
-    parts.push({ text: mainPrompt });
   }
 
   images.forEach(image => {
