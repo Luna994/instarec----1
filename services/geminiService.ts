@@ -2,13 +2,7 @@
 import { GoogleGenAI } from "@google/genai";
 import type { RecipeOutput, ImageFile } from '../types';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable is not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const model = ai.models;
 
@@ -97,7 +91,7 @@ export const generateInstagramPost = async (text: string, images: ImageFile[]): 
     });
   });
 
-  const response = await model.generateContent({
+  const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
     contents: { parts: parts },
     config: {
